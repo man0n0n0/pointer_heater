@@ -1,0 +1,33 @@
+# SPDX-FileCopyrightText: 2021 ladyada for Adafruit Industries
+# SPDX-License-Identifier: MIT
+
+import time
+import busio
+import board
+import adafruit_amg88xx
+import pwmio
+from adafruit_motor import servo
+
+# create thermal detection objects
+i2c = busio.I2C(board.SCL, board.SDA)
+amg = adafruit_amg88xx.AMG88XX(i2c)
+
+# create servo control involved object
+pwm = pwmio.PWMOut(board.20, frequency=50)
+pwm = pwmio.PWMOut(board.21, frequency=50)
+
+servo_x = servo.ContinuousServo(pwm)
+servo_y = servo.ContinuousServo(pwm)
+
+while True:
+    # produce a thermal matrix
+    for row in amg.pixels:
+        # Pad to 1 decimal place
+        print(["{0:.1f}".format(temp) for temp in row])
+        print("")
+    print("\n")
+    time.sleep(1)
+    
+    # 
+
+
