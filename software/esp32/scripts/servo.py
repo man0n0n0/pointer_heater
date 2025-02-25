@@ -7,8 +7,8 @@ from adafruit_motor import servo
 # create servo control involved object
 pwmx = pwmio.PWMOut(board.IO1, frequency=50)
 pwmy = pwmio.PWMOut(board.IO2, frequency=50)
-servo_x = servo.ContinuousServo(pwmx)
-servo_y = servo.ContinuousServo(pwmy)
+servo_x = servo.Servo(pwmx)
+servo_y = servo.Servo(pwmy)
 
 async def random_movement(aimed_x_angle=None):
     try:
