@@ -4,7 +4,7 @@ from adafruit_httpserver import Server, Request, JSONResponse, Response
 import socketpool
 
 from scripts.servo import random_movement
-from scripts.thermal_display import get_temperatures, get_flat_pixels
+from scripts.amg8833 import get_temperatures, get_flat_pixels
 
 # Set access point on board
 ssid = "broken_heart"
