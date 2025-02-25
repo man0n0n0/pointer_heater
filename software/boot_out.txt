@@ -1,0 +1,7 @@
+Adafruit CircuitPython 9.2.4 on 2025-01-29; Maker Go ESP32C3 Supermini with ESP32-C3
+Board ID:makergo_esp32c3_supermini
+UID:437BAD9F094A
+boot.py output:
+Traceback (most recent call last):
+  File "boot.py", line 1, in <module>
+ImportError: no module named 'usb_cdc'
