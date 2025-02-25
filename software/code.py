@@ -1,48 +1,39 @@
-# SPDX-FileCopyrightText: 2021 ladyada for Adafruit Industries
-# SPDX-License-Identifier: MIT
-
-import time
-import busio
-import board
-import adafruit_amg88xx
-import pwmio
-from adafruit_motor import servo
 import asyncio
-import random
+import wifi
+from adafruit_httpserver import Server, Request, JSONResponse, Response
+import socketpool
 
-# create thermal detection objects
-i2c = busio.I2C(board.SCL, board.SDA)
-amg = adafruit_amg88xx.AMG88XX(i2c)
+from scripts.servo import random_movement
+from scripts.thermal_display import get_temperatures, get_flat_pixels
 
-# create servo control involved object
-pwmx = pwmio.PWMOut(board.IO20, frequency=50)
-pwmy = pwmio.PWMOut(board.IO21, frequency=50)
-servo_x = servo.ContinuousServo(pwmx)
-servo_y = servo.ContinuousServo(pwmy)
+# Set access point on board
+ssid = "broken_heart"
+psw = "key_to_the_broken_heart"
+wifi.radio.start_ap(ssid=ssid, password=psw)
+
+# Configure websockets
+pool = socketpool.SocketPool(wifi.radio)
+server = Server(pool, debug=True)
+server.headers = {
+    "Access-Control-Allow-Origin": "*",
+}
+
+@server.route("/temperatures")
+def base(request: Request):
+    flat_pixels = get_flat_pixels()
+    return Response(request, str(flat_pixels))
+
+#server.serve_forever(str(wifi.radio.ipv4_address))
+server.serve_forever("192.168.4.1")
 
 async def thermal_detection():
     while True:
-        # produce a thermal matrix
-        for row in amg.pixels:
-            # Pad to 1 decimal place
-            print(["{0:.1f}".format(temp) for temp in row])
-            print("")
-        print("\n")
-        time.sleep(1)
+        await get_temperatures()
 
 async def servo_control(aimed_x_angle=None):
     while True:
-        x_angle = random(10,170) if not x_angle else aimed_x_angle
-        
-        if not prev_x_angle:
-            prev_x_angle = 90 
-            await asyncio.sleep(1)
-            
-        for angle in range(prev_x_angle, x_angle, 5):  # 0 - 180 degrees, 5 degrees at a time.
-            servo_x.angle = angle
-            time.sleep(0.05)
-            
-        prev_x_angle = x_angle
+        await random_movement(aimed_x_angle)
+
 
 # define the main function to run the event loop
 async def main():
@@ -53,5 +44,3 @@ async def main():
 loop = asyncio.get_event_loop()  
 loop.create_task(main())  # Create a task to run the main function
 loop.run_forever()  # Run the event loop indefinitely    
-
-
