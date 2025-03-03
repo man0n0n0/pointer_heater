@@ -1,0 +1,17 @@
+# To enable the web workflow, these must be named like this
+# These are the credentials of the router the board will try to connect to.
+CIRCUITPY_WIFI_SSID="SuperMango"
+CIRCUITPY_WIFI_PASSWORD="goodlife"
+
+# Web workflow config
+CIRCUITPY_WEB_API_PASSWORD="goodlife"
+CIRCUITPY_WEB_API_PORT=80
+CIRCUITPY_WEB_INSTANCE_NAME="pointer_heater"
+
+# Credentials of the board's access point. Not used except in some examples.
+ESP32_AP_SSID="broken_heart"
+ESP32_AP_PWD="key_to_the_broken_heart"
+ESP32_AP_IP="192.168.8.118"
+
+# Static ip of the computer running the MQTT broker
+MQTT_BROKER_IP="192.168.8.187"
