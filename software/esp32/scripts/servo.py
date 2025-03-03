@@ -4,11 +4,31 @@ import board
 import pwmio
 from adafruit_motor import servo
 
-# create servo control involved object
-pwmx = pwmio.PWMOut(board.IO1, frequency=50)
-pwmy = pwmio.PWMOut(board.IO2, frequency=50)
-servo_x = servo.Servo(pwmx)
-servo_y = servo.Servo(pwmy)
+class Servo:
+    def __init__(self):
+        self.pwmy = pwmio.PWMOut(board.IO2, frequency=50)
+        self.pwmx = pwmio.PWMOut(board.IO1, frequency=50)
+        self.servo_x = servo.Servo(self.pwmx)
+        self.servo_y = servo.Servo(self.pwmy)
+        self.prev_x_angle = 90
+    
+    async def move_to_x_angle(self, angle):
+        self.servo_x.angle = int(angle)
+        self.prev_x_angle = int(angle)
+    
+    async def get_random_angles_range(self, aimed_x_angle=None):
+        x_angle = random.randint(10,170) if not aimed_x_angle else aimed_x_angle
+        increment = 5 if self.prev_x_angle < x_angle else -5 # Negative increment to avoid movement getting stuck when prev_x_angle is big
+        return range(self.prev_x_angle, x_angle, increment) # 0 - 180 degrees, 5 degrees at a time.
+
+    
+
+        
+"""
+# I split this method in two (see below)
+# To allow better integration with the mqtt workflow
+# But obviously feel free to change this or revert it back to its previous state :))
+# The only thing is that we should avoid printing stuff and instead send the data on the mqtt broker
 
 async def random_movement(aimed_x_angle=None):
     try:
@@ -28,3 +48,5 @@ async def random_movement(aimed_x_angle=None):
         await asyncio.sleep(0.05)
         
     prev_x_angle = x_angle
+
+"""

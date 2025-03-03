@@ -1,2 +1,2 @@
-import usb_cdc
-usb_cdc.enable(data=True)
+import storage
+storage.disable_usb_drive()
