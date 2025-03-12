@@ -5,21 +5,21 @@ import pwmio
 from adafruit_motor import servo
 
 class Servo:
-    def __init__(self):
-        self.pwmy = pwmio.PWMOut(board.IO2, frequency=50)
-        self.pwmx = pwmio.PWMOut(board.IO1, frequency=50)
-        self.servo_x = servo.Servo(self.pwmx)
-        self.servo_y = servo.Servo(self.pwmy)
-        self.prev_x_angle = 90
+    def __init__(self, gpio):
+        self.pwm = pwmio.PWMOut(gpio, frequency=50)
+        self.servo = servo.Servo(self.pwmx)
+        self.prev_angle = 90
     
-    async def move_to_x_angle(self, angle):
-        self.servo_x.angle = int(angle)
-        self.prev_x_angle = int(angle)
+    async def move_to_angle(self, angle):
+        increment = 5 if self.prev_angle < angle else -5
+        for a in range(self.prev_angle,angle,increment):
+            self.servo.angle = int(angle)
+        self.prev_angle = angle
     
-    async def get_random_angles_range(self, aimed_x_angle=None):
-        x_angle = random.randint(10,170) if not aimed_x_angle else aimed_x_angle
-        increment = 5 if self.prev_x_angle < x_angle else -5 # Negative increment to avoid movement getting stuck when prev_x_angle is big
-        return range(self.prev_x_angle, x_angle, increment) # 0 - 180 degrees, 5 degrees at a time.
+    # async def get_random_angles_range(self, aimed_x_angle=None):
+    #     x_angle = random.randint(10,170) if not aimed_x_angle else aimed_x_angle
+    #     increment = 5 if self.prev_x_angle < x_angle else -5 # Negative increment to avoid movement getting stuck when prev_x_angle is big
+    #     return range(self.prev_x_angle, x_angle, increment) # 0 - 180 degrees, 5 degrees at a time.
 
     
 
