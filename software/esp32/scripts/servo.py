@@ -1,13 +1,12 @@
 import random
 import asyncio
-import board
 import pwmio
 from adafruit_motor import servo
 
 class Servo:
     def __init__(self, gpio):
         self.pwm = pwmio.PWMOut(gpio, frequency=50)
-        self.servo = servo.Servo(self.pwmx)
+        self.servo = servo.Servo(self.pwm)
         self.prev_angle = 90
     
     async def move_to_angle(self, angle):
