@@ -20,14 +20,14 @@ async def thermal_detection():
 
 async def servo_control():
     while True:
-        mqtt_client.publish("movement", json.dumps({"angle": "new movement"}))
-        await asyncio.sleep(1)
         angles = {'x':random.randint(10,180),'y':random.randint(10,180)}
 
         await servo_x.move_to_angle(angles['x'])
         await servo_y.move_to_angle(angles['y'])
 
-        mqtt_client.publish("movement", json.dumps({"angle": angles[0]}))
+        mqtt_client.publish("angle_x", json.dumps({"angle_x": angles['x']}))
+        mqtt_client.publish("angle_y", json.dumps({"angle_y": angles['y']}))
+
         await asyncio.sleep(0.05)
 
 
