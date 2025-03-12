@@ -15,11 +15,6 @@ class Servo:
         for a in range(self.prev_angle,angle,increment):
             self.servo.angle = int(angle)
         self.prev_angle = angle
-    
-    # async def get_random_angles_range(self, aimed_x_angle=None):
-    #     x_angle = random.randint(10,170) if not aimed_x_angle else aimed_x_angle
-    #     increment = 5 if self.prev_x_angle < x_angle else -5 # Negative increment to avoid movement getting stuck when prev_x_angle is big
-    #     return range(self.prev_x_angle, x_angle, increment) # 0 - 180 degrees, 5 degrees at a time.
 
     
 
