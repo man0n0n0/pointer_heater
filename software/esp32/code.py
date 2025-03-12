@@ -2,11 +2,11 @@ from asyncio import create_task, gather, run, sleep as async_sleep
 import asyncio
 import json
 import random
+import board
 
 from scripts.servo import Servo
 from scripts.amg8833 import get_flat_pixels
 from scripts.mqtt import new_mqtt_client
-import board
 
 mqtt_client = new_mqtt_client()
 servo_x = Servo(board.IO5)
@@ -25,7 +25,7 @@ async def servo_control():
         await servo_x.move_to_angle(angles['x'])
         await servo_y.move_to_angle(angles['y'])
 
-        mqtt_client.publish("angle_x", json.dumps("angle_x": angles['x']))
+        mqtt_client.publish("angle_x", json.dumps(angles['x']))
         mqtt_client.publish("angle_y", json.dumps(angles['y']))
 
         await asyncio.sleep(0.05)

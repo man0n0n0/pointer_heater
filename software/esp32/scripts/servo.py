@@ -12,7 +12,8 @@ class Servo:
     async def move_to_angle(self, angle):
         increment = 5 if self.prev_angle < angle else -5
         for a in range(self.prev_angle,angle,increment):
-            self.servo.angle = int(angle)
+            self.servo.angle = int(a)
+            await asyncio.sleep(0.2)
         self.prev_angle = angle
 
     
