@@ -25,8 +25,8 @@ async def servo_control():
         await servo_x.move_to_angle(angles['x'])
         await servo_y.move_to_angle(angles['y'])
 
-        mqtt_client.publish("angle_x", json.dumps({"angle_x": angles['x']}))
-        mqtt_client.publish("angle_y", json.dumps({"angle_y": angles['y']}))
+        mqtt_client.publish("angle_x", json.dumps("angle_x": angles['x']))
+        mqtt_client.publish("angle_y", json.dumps(angles['y']))
 
         await asyncio.sleep(0.05)
 
