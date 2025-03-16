@@ -1,3 +1,5 @@
+# Based on this: https://github.com/adafruit/Adafruit_CircuitPython_AMG88xx/blob/main/examples/amg88xx_rpi_thermal_cam.py
+
 import serial
 import numpy as np
 import pygame
@@ -11,14 +13,14 @@ def constrain(val, min_val, max_val):
 
 def map_value(x, in_min, in_max, out_min, out_max):
     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
-
+    
 class ThermalCameraDisplay:
     def __init__(self, serial_port='/dev/tty.usbmodem2101'):
         # Initialize serial connection
         # self.ser = serial.Serial(serial_port)
         
         # Set temperature range (adjust based on your environment)
-        self.min_temp = 20
+        self.min_temp = 15
         self.max_temp = 30
         
         # Set how many color values we can have
@@ -29,9 +31,7 @@ class ThermalCameraDisplay:
         self.width = 240
         self.displayPixelWidth = self.width / 30
         self.displayPixelHeight = self.height / 30
-        # self.colors = [(int(c.red * 255), int(c.green * 255), int(c.blue * 255)) for c in list(Color("indigo").range_to(Color("red"), self.colordepth))]
-        for c in list(Color("indigo").range_to(Color("red"), self.colordepth)): 
-            self.colors = [(int(c.red * 255), int(c.green * 255), int(c.blue * 255))]
+        self.colors = [(int(c.red * 255), int(c.green * 255), int(c.blue * 255)) for c in list(Color("indigo").range_to(Color("red"), self.colordepth))]
 
         # Pygame config
         self.pygame = pygame
@@ -54,28 +54,25 @@ class ThermalCameraDisplay:
 
     def read_data(self):
         try:
-            # Read serial line
-            data = self.ser.readline().decode('utf-8').strip()
+            # data = self.ser.readline().decode('utf-8').strip()
+            data = '''[23.1, 22.1, 21.1, 20.1, 19.1, 18.1, 17.1, 16.1,23.1, 22.1, 21.1, 20.1, 19.1, 18.1, 17.1, 16.1, 23.1, 22.1, 21.1, 20.1, 19.1, 18.1, 17.1, 16.1, 23.1, 22.1, 21.1, 20.1, 19.1, 18.1, 17.1, 16.1, 23.1, 22.1, 21.1, 20.1, 19.1, 18.1, 17.1, 16.1, 23.1, 22.1, 21.1, 20.1, 19.1, 18.1, 17.1, 16.1, 23.1, 22.1, 21.1, 20.1, 19.1, 18.1, 17.1, 16.1, 23.1, 22.1, 21.1, 20.1, 19.1, 18.1, 17.1, 16.1]'''
+            temps = np.array([float(x) for x in data.replace('[', '').replace(']', '').split(',')])
             
-            # Convert to numpy array
-            temps = np.array([float(x) for x in data.split(',')])
-            return temps.reshape(8, 8)
+            return temps
         except:
             return None
 
     def update(self):
-        pixels = []
-        data = self.read_data()
-        # for row in sensor.pixels:
-        #     pixels = pixels + row
-        # pixels = [map_value(p, MINTEMP, MAXTEMP, 0, COLORDEPTH - 1) for p in pixels]
+        pixels = self.read_data() # Should look like [23.1 22.1 21.1 20.1 19.1 18.1 17.1 16.1 23.1 22.1 21.1 20.1 ....] with 64 values (no comma bc numpy array)
+        pixels = [map_value(p, self.min_temp, self.max_temp, 0, self.colordepth - 1) for p in pixels]
+
         bicubic = griddata(self.points, pixels, (self.grid_x, self.grid_y), method="cubic")
-        
+
         for ix, row in enumerate(bicubic):
             for jx, pixel in enumerate(row):
                 self.pygame.draw.rect(
                     self.lcd,
-                    self.colors[constrain(int(pixel), 0, COLORDEPTH - 1)],
+                    self.colors[constrain(int(pixel), 0, self.colordepth - 1)],
                     (
                         self.displayPixelHeight * ix,
                         self.displayPixelWidth * jx,
@@ -88,10 +85,10 @@ class ThermalCameraDisplay:
 
     def run(self):
         self.update()
-        
+
 # Usage
 if __name__ == '__main__':
     display = ThermalCameraDisplay('/dev/tty.usbmodem2101')  # Change port as needed
     display.pygame_start()
-    display.run()
-    
+    while True:
+        display.run()

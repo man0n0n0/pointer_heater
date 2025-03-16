@@ -43,10 +43,17 @@ mosquitto_pub -h 192.168.8.187 -t 'test/topic' -m 'helloWorld'
 
 For now, the mosquitto server is only there to display various data that we may need, especially when developping.
 
+To kill the mosquitto server you can either type
+
+brew services stop moquitto
+
+OR
+
+pkill mosquitto
 
 # How to upload code through the net  
 
-The CircuitPython web workflow has been activate, so just go to the board's ip address and upload your code from there. Ex: 
+The CircuitPython web workflow has been activated, so just go to the board's ip address and upload your code from there. Ex: 
 
 192.168.8.118/fs
 192.168.8.118/code
